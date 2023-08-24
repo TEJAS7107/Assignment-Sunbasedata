@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .login-container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+      width: 300px;
+    }
+    .form-group {
+      margin-bottom: 10px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+    }
+    button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 3px;
+      cursor: pointer;
+      width: 100%;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Login</h2>
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" id="username" placeholder="Enter your username">
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Enter your password">
+    </div>
+    <button id="loginButton">Login</button>
+  </div>
+
+  <script>
+    const loginButton = document.getElementById('loginButton');
+     //const apiUrl = 'http://localhost:9055/api/auth/login';
+    loginButton.addEventListener('click', () => {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+// Simulate authentication (replace this with your actual authentication logic)
+       fetch("http://localhost:9055/api/auth/login", {
+         method: 'POST',
+          headers: {
+          'Authorization': ``,
+          'Content-Type': 'application/json' // Specify JSON content type
+        },
+      body: JSON.stringify({id:username,password:password})
+    })
+    .then(response => response.json())
+    .then(data => {
+      // Handle the API response data here
+      alert('Login successful!');
+      console.log(data);
+      const tokenn = data['token'];
+      console.log(tokenn);
+      localStorage.setItem('token', data['token']);
+       // Log the data to the browser console
+      // localStorage.setItem('role', data.role);
+      // localStorage.setItem('id', data['id']);
+      window.location = 'Dashboard.html';
+
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  });
+
+    console.log(tokenn);
+      if (localStorage.getItems('token')) {
+         // Replace with your actual token
+       // localStorage.setItem('token', token);
+
+        
+      } else {
+        alert('Login failed. Please check your username and password.');
+      }
+
+  </script>
+</body>
+</html>

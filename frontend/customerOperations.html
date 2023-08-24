@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>User Data</title>
+	 <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+		table {
+		  border-collapse: collapse;
+		  width: 100%;
+		}
+
+		th, td {
+		  border: 1px solid #ccc;
+		  padding: 8px;
+		  text-align: left;
+		}
+
+		th {
+		  background-color: #f2f2f2;
+		}
+
+		
+	</style>
+</head>
+<body>
+	 <table id="data-table">
+    <thead>
+      <tr>
+      	<th>First Name</th>
+        <th>Last Name</th>
+        <th>Street</th>
+        <th>Address</th>
+        <th>City</th>
+        <th>State</th>
+        <th>Email</th>
+        <th>Number</th>
+        <th>Update</th>
+        <th>Delete</th>
+        <th>Save</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Data rows will be inserted here dynamically -->
+    </tbody>
+  </table>
+	
+
+	<script>
+	const tokenofStorage = localStorage.getItem('token');
+      fetch("http://localhost:9055/api/operations/read", {
+          headers: {
+          'Authorization': `Bearer ${tokenofStorage}`,
+          'Content-Type': 'application/json' // Specify JSON content type
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+      // Handle the API response data here
+      //alert('User Created successfully!');
+      // console.log(data);
+      // const tokenn = data['token'];
+      // console.log(tokenn);
+      // localStorage.setItem('token', data['token']);
+       // Log the data to the browser console
+      // localStorage.setItem('role', data.role);
+      // localStorage.setItem('id', data['id']);
+     //window.location = 'Dashboard.html';
+     console.log(data)
+     processApiData(data);
+
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+
+		  
+function processApiData(data) {
+  const table = document.getElementById('data-table'); // Assuming you have a table element in your HTML
+  const tableBody = table.querySelector('tbody');
+  
+  data.forEach(item => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${item.firstname}</td>
+      <td>${item.lastname}</td>
+      <td>${item.street}</td>
+      <td>${item.address}</td>
+      <td>${item.city}</td>
+      <td>${item.state}</td>
+      <td>${item.email}</td>
+      <td>${item.number}</td>
+      <td><button class="edit-button">Edit</button></td>
+      <td><button class="delete-button" data-number="${item.email}">Delete</button></td>
+      <td><button class="save-button" style="display:none;">Save</button></td>
+    `;
+    tableBody.appendChild(row);
+
+  });
+  //   editButtons.forEach(button => {
+  //   button.addEventListener('click', toggleEdit);
+  // });
+    const editButtons = document.querySelectorAll('.edit-button');
+  editButtons.forEach(button => {
+    button.addEventListener('click', toggleEdit);
+  });
+    const saveButtons = document.querySelectorAll('.save-button');
+  saveButtons.forEach(button => {
+    button.addEventListener('click', saveChanges);
+  });
+    const deleteButtons = document.querySelectorAll('.delete-button');
+  deleteButtons.forEach(button => {
+    button.addEventListener('click', deleteRow);
+  });
+
+
+		
+}
+
+// function toggleEdit(event) {
+//   const row = event.target.closest('tr');
+//   const cells = row.querySelectorAll('td:not(:last-child)');
+  
+//   cells.forEach(cell => {
+//     cell.contentEditable = !cell.isContentEditable;
+//   });
+
+// }
+function toggleEdit(event) {
+  const row = event.target.closest('tr');
+  const cells = row.querySelectorAll('td:not(:last-child)');
+     const firstname = row.querySelector('td:nth-child(1)').innerText;
+   const lastname = row.querySelector('td:nth-child(2)').innerText;
+   const street = row.querySelector('td:nth-child(3)').innerText;
+   const address = row.querySelector('td:nth-child(4)').innerText;
+   const city = row.querySelector('td:nth-child(5)').innerText;
+   const state = row.querySelector('td:nth-child(6)').innerText;
+   const email = row.querySelector('td:nth-child(7)').innerText;
+
+    const number = row.querySelector('td:nth-child(8)').innerText;
+  
+  cells.forEach(cell => {
+    cell.contentEditable = !cell.isContentEditable;
+  });
+  const saveButton = row.querySelector('.save-button');
+  saveButton.style.display = 'block';
+  saveButton.setAttribute('data-number', number); // Set the data-number attribute
+  saveButton.setAttribute('data-firstname', firstname); // Set the data-number attribute
+  saveButton.setAttribute('data-lastname', lastname); // Set the data-number attribute
+  saveButton.setAttribute('data-street', street); // Set the data-number attribute
+  saveButton.setAttribute('data-address', address); // Set the data-number attribute
+  saveButton.setAttribute('data-city', city); // Set the data-number attribute
+  saveButton.setAttribute('data-state', state); // Set the data-number attribute
+  saveButton.setAttribute('data-email', email); // Set the data-number attribute
+
+}
+
+function deleteRow(event) {
+  const row = event.target.closest('tr');
+  console.log(tokenofStorage);
+   const firstname = row.querySelector('td:nth-child(1)').innerText;
+   const lastname = row.querySelector('td:nth-child(2)').innerText;
+   const street = row.querySelector('td:nth-child(3)').innerText;
+   const address = row.querySelector('td:nth-child(4)').innerText;
+   const city = row.querySelector('td:nth-child(5)').innerText;
+   const state = row.querySelector('td:nth-child(6)').innerText;
+
+    
+  const number = row.querySelector('.delete-button').getAttribute('data-number');
+ // console.log(typef(number));
+      fetch("http://localhost:9055/api/operations/delete/"+number, {
+      	method:'DELETE',
+          headers: {
+          'Authorization': `Bearer ${tokenofStorage}`,
+          'Content-Type': 'application/json' // Specify JSON content type
+        },
+    })
+    .then(response => {
+    	if (response.ok){
+    		alert('Deleted User');
+    	}
+    	else{
+
+    	}
+    	 window.location = 'customerOperations.html';
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+}
+
+
+function saveChanges(event) {
+  const row = event.target.closest('tr');
+  const cells = row.querySelectorAll('td:not(:last-child)');
+  const number = event.target.getAttribute('data-number');
+  const firstname = event.target.getAttribute('data-firstname');
+  const lastname = event.target.getAttribute('data-lastname');
+  const street = event.target.getAttribute('data-street');
+  const address = event.target.getAttribute('data-address');
+  const city = event.target.getAttribute('data-city');
+  const state = event.target.getAttribute('data-state');
+  const email = event.target.getAttribute('data-email');
+  //const number = event.target.getAttribute('data-number');
+  const data = {};
+
+  cells.forEach((cell, index) => {
+    const key = ['firstname', 'lastname', 'street', 'address', 'city', 'state', 'email', 'number'][index];
+    data[key] = cell.innerText;
+  });
+
+  // Make an API call to update the edited data
+  // Replace 'your-api-endpoint' and 'your-id' with actual values
+  fetch("http://localhost:9055/api/operations/update/"+number, {
+    method: 'PUT', // or 'PATCH' depending on your API
+    headers: {
+    	'Authorization': `Bearer ${tokenofStorage}`,
+      'Content-Type': 'application/json'
+    },
+     body: JSON.stringify(data)
+    //body: JSON.stringify({firstname:firstname,lastname:lastname,street:street,city:city,address:address,email:email,state:state})
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Error updating resource');
+    }
+    return response.json();
+  })
+  .then(updatedData => {
+    console.log('Resource updated successfully:', updatedData);
+    // If needed, you can update the table with the updated data
+    // For example, update the edited row with updatedData
+  })
+  .catch(error => {
+    console.error('Error:', error.message);
+  });
+}
+	</script>
+</body>
+</html>
